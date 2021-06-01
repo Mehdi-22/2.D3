@@ -116,7 +116,7 @@ function update(data) {
     // Bars
     // Join new data with old elements
 
-    var rects = g.selectAll("rect")
+    var rects = g.selectAll("circle")
         .data(data, function(d) {
             return d.month;
         });
@@ -126,43 +126,42 @@ function update(data) {
     rects.exit().
     attr("fill", "red")
         .transition(t)
-        .attr("y", y(0))
+        .attr("cy", y(0))
         .attr("height", 0)
         .remove();
 
     //Update old elements present in new data
 
-    rects
-        .transition(t)
-        .attr("y", function(d) {
-            return y(d[value]);
-        })
-        .attr("x", function(d) {
-            return x(d.month);
-        })
-        .attr("height", function(d) {
-            return height - y(d[value]);
-        })
-        .attr("width", x.bandwidth);
+    /* rects
+         .transition(t)
+         .attr("y", function(d) {
+             return y(d[value]);
+         })
+         .attr("x", function(d) {
+             return x(d.month);
+         })
+         .attr("height", function(d) {
+             return height - y(d[value]);
+         })
+         .attr("width", x.bandwidth);*/
 
     //ENTER new elements present in new data
     rects.enter()
-        .append("rect")
-        .attr("x", function(d) {
-            return x(d.month);
+        .append("circle")
+        .attr("fill", "grey")
+        .attr("cy", y(0))
+        .attr("cx", function(d) {
+            return x(d.month) + x.bandwidth() / 2;
         })
-        .attr("width", x.bandwidth)
+        .attr("r", 5)
         //AND UPDATE old elements present in new data.
         .merge(rects)
-        .attr("fill", "grey")
-        .attr("y", y(0))
-        .attr("height", 0)
         .transition(t)
-        .attr("y", function(d) {
-            return y(d[value]);
+        .attr("cx", function(d) {
+            return x(d.month) + x.bandwidth() / 2
         })
-        .attr("height", function(d) {
-            return height - y(d[value]);
+        .attr("cy", function(d) {
+            return y(d[value]);
         });
 
     var label = flag ? "Revenue" : "Profit";
